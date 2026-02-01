@@ -1,40 +1,37 @@
 package org.firstinspires.ftc.teamcode.pedroPathing;
 
+import com.pedropathing.control.FilteredPIDFCoefficients;
+import com.pedropathing.control.PIDFCoefficients;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.follower.FollowerConstants;
 import com.pedropathing.ftc.FollowerBuilder;
-import com.pedropathing.ftc.localization.constants.PinpointConstants;
 import com.pedropathing.paths.PathConstraints;
-import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.pedroPathing.DriveTrain.DiffySwerveConstants;
 import org.firstinspires.ftc.teamcode.pedroPathing.DriveTrain.DiffySwerveDrive;
 
 public class Constants {
 
-    public static FollowerConstants followerConstants = new FollowerConstants();
+    public static FollowerConstants followerConstants = new FollowerConstants()
+            .mass(5)
+            .forwardZeroPowerAcceleration(0)
+            .lateralZeroPowerAcceleration(0)
+            .centripetalScaling(0.005)
+            .useSecondaryTranslationalPIDF(false)
+            .useSecondaryHeadingPIDF(false)
+            .useSecondaryDrivePIDF(false)
+            .translationalPIDFCoefficients(new PIDFCoefficients(0.1, 0.0, 0.01, 0.0))
+            .headingPIDFCoefficients(new PIDFCoefficients(0.1, 0.0, 0.01, 0.0))
+            .drivePIDFCoefficients(new FilteredPIDFCoefficients(0.1, 0.0, 0.01, 0.6, 0.0));
+
     public static PathConstraints pathConstraints = new PathConstraints(0.99, 100, 1, 1);
 
-    public static PinpointConstants localizerConstants = new PinpointConstants()
-            .forwardPodY(-5)
-            .strafePodX(0.5)
-            .distanceUnit(DistanceUnit.INCH)
-            .hardwareMapName("pinpoint")
-            .encoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD)
-            .forwardEncoderDirection(GoBildaPinpointDriver.EncoderDirection.FORWARD)
-            .strafeEncoderDirection(GoBildaPinpointDriver.EncoderDirection.FORWARD);
+    public static DiffySwerveConstants driveConstants = new DiffySwerveConstants();
 
     public static Follower createFollower(HardwareMap hardwareMap) {
-
-        DiffySwerveConstants driveConstants = new DiffySwerveConstants();
-
-
-
         return new FollowerBuilder(followerConstants, hardwareMap)
                 .pathConstraints(pathConstraints)
-                .pinpointLocalizer(localizerConstants)
                 .setDrivetrain(new DiffySwerveDrive(hardwareMap, driveConstants))
                 .build();
     }
